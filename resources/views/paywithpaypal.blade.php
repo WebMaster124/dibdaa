@@ -179,7 +179,7 @@ input {
                 
                 </div>
                 <div class="panel-body">
-                    <p class="pay_text">Please wait, your order is being processed and you will be redirected to the PayPay website </p>
+                    <p class="pay_text">Please wait, your order is being processed and you will be redirected to the PayPal website </p>
                     
 <!--                    <img class="loader" alt="paypal" src="../images/ajax-loader_transparent.gif">-->
                     <form class="form-horizontal" method="POST" id="payment-form" role="form" action="{!! URL::route('addmoney.paypal') !!}" >

@@ -134,7 +134,7 @@ input {
                     <?php // Session::forget('error');?>
                     @endif
                     
-                    <!--<p class="pay_text">Please wait, your order is being processed and you will be redirected to the PayPay website </p>-->
+                    <!--<p class="pay_text">Please wait, your order is being processed and you will be redirected to the PayPal website </p>-->
                     <form class="form-horizontal" method="POST" id="payment-form" role="form" action="{{ action('CheckoutController@placePaypalOrder') }}" >
                        
                         <div class="form-group{{ $errors->has('amount') ? ' has-error' : '' }}">

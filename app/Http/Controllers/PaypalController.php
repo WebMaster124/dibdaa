@@ -101,7 +101,7 @@ curl_close($ch); */
 //        echo 'test';
         $card = round($r->receiver_arr[0]['amount'][0]);
         $params = array(
-		    'ivp_method'  => 'create',
+            'ivp_method'  => 'create',
             'ivp_store' => '21099',
             'ivp_authkey' => 'k2qM4~bt4k#M6vv3',
             'ivp_trantype' => 'sale',
@@ -112,9 +112,9 @@ curl_close($ch); */
             'ivp_amount' => $r->receiver_arr[0]['amount'][0],
             'tran_ref' => '010321000864',
             'ivp_test' => '1',
-            'return_auth' => '{{ env('APP_URL') }}#/seller-my-account/account',
-            'return_can'  => '{{ env('APP_URL') }}',
-            'return_decl' => '{{ env('APP_URL') }}'
+            'return_auth' => 'http://local.dibdaa.com/#/seller-my-account/account',
+            'return_can'  => 'http://local.dibdaa.com/',
+            'return_decl' => 'http://local.dibdaa.com/'
             );
 //       print_r($params);
 //       exit;
@@ -129,9 +129,9 @@ curl_close($ch); */
             return $results;
 //            exit;
             curl_close($ch);
-			 */
-			
-			
+             */
+            
+            
 
 
 
@@ -150,11 +150,11 @@ $results = json_decode($results,true);
 $ref= trim($results['order']['ref']);
 $url= trim($results['order']['url']);
 if (empty($ref) || empty($url)) {
-	echo "ghjhgj";exit;
+    echo "ghjhgj";exit;
 }else{
-	 return $results;
+     return $results;
 }
-		
+        
         
 //        $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
 //        $header = array(
@@ -198,20 +198,20 @@ if (empty($ref) || empty($url)) {
         $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
         
         $header = array(
-            "X-PAYPAL-SECURITY-USERID:paypal-facilitator_api1.dibdaa.com",
-            "X-PAYPAL-SECURITY-PASSWORD :5H8P9XPNHPWAZ5D6",
-            "X-PAYPAL-SECURITY-SIGNATURE :ASV57ivVN4A960WA9t1PMtwKn0F9AEOMAZ8zo3Mz52Qa4wBOZt2CO2BS",
-            "X-PAYPAL-REQUEST-DATA-FORMAT :JSON",
-            "X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
-            "X-PAYPAL-APPLICATION-ID:APP-80W284485P519543T");
+            "X-PAYPAL-SECURITY-USERID: ".env("PAYPAL_SANDBOX_API_USERNAME"),
+            "X-PAYPAL-SECURITY-PASSWORD: ".env("PAYPAL_SANDBOX_API_PASSWORD"),
+            "X-PAYPAL-SECURITY-SIGNATURE: ".env("PAYPAL_SANDBOX_API_SECRET"),
+            "X-PAYPAL-REQUEST-DATA-FORMAT: JSON",
+            "X-PAYPAL-RESPONSE-DATA-FORMAT: JSON",
+            "X-PAYPAL-APPLICATION-ID:APP-80W284485P519543T",
         
 //        $header = array(
 //            "X-PAYPAL-SECURITY-USERID:$paypal_detail->user_id",
-//			"X-PAYPAL-SECURITY-PASSWORD : $paypal_detail->password",
-//			"X-PAYPAL-SECURITY-SIGNATURE : $paypal_detail->signature",
-//			"X-PAYPAL-REQUEST-DATA-FORMAT : JSON",
-//			"X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
-//			"X-PAYPAL-APPLICATION-ID:$paypal_detail->app_id" );
+//          "X-PAYPAL-SECURITY-PASSWORD : $paypal_detail->password",
+//          "X-PAYPAL-SECURITY-SIGNATURE : $paypal_detail->signature",
+//          "X-PAYPAL-REQUEST-DATA-FORMAT : JSON",
+//          "X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
+//          "X-PAYPAL-APPLICATION-ID:$paypal_detail->app_id" );
 
 //        $url="https://svcs.sandbox.paypal.com/AdaptivePayments/Pay?actionType=PAY&clientDetails.applicationId=APP-80W284485P519543T&clientDetails.ipAddress=192.168.1.113&senderEmail=paypal-business@dibdaa.com&currencyCode=USD&receiverList.receiver(0).amount=135.00&receiverList.receiver(0).email=paypalbusiness@dibdaa.com&requestEnvelope.errorLanguage=en_US&returnUrl=https://www.techcronus.com/staging/Dibdaa/www/&cancelUrl=https://www.techcronus.com/staging/Dibdaa/www/";
 
@@ -227,15 +227,12 @@ if (empty($ref) || empty($url)) {
                 "errorLanguage" => "en_US",
                 "detailLevel" => "ReturnAll",
             ),
-        );
+        ),
+    );
 //        print_r($createPacket);
 //        exit;
-        
 //        echo $apiUrl = 'https://svcs.sandbox.paypal.com/AdaptivePayments/';
         $apiUrl = 'https://www.sandbox.paypal.com/checkoutnow?token=';
-        
-        
-        
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
 //        curl_setopt($ch, CURLOPT_URL, $apiUrl.'Pay');
@@ -254,6 +251,7 @@ if (empty($ref) || empty($url)) {
 
     function PaypalPaymentDetail(Request $r){
         $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
+      
 
         $header = array(
             "X-PAYPAL-SECURITY-USERID:$paypal_detail->user_id",
@@ -361,9 +359,9 @@ if (empty($ref) || empty($url)) {
         // create a new cURL resource
 $ch = curl_init();
 
-$ppUserID = "paypal-facilitator_api1.dibdaa.com"; //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppPass = "5H8P9XPNHPWAZ5D6"; //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppSign = "ASV57ivVN4A960WA9t1PMtwKn0F9AEOMAZ8zo3Mz52Qa4wBOZt2CO2BS"; //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+$ppUserID = env('PAYPAL_SANDBOX_API_USERNAME'); //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+$ppPass = env('PAYPAL_SANDBOX_API_PASSWORD'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+$ppSign = env('PAYPAL_SANDBOX_API_SECRET'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
 $ppAppID = "APP-80W284485P519543T"; //if it is sandbox then app id is always: APP-80W284485P519543T
 //$sandboxEmail = "********************"; //comment this line if you want to use it in production mode.It is just for sandbox mode
 
@@ -411,12 +409,13 @@ curl_close($ch);
         //print_r($paypal_detail);
         //exit;
         $header = array(
-            "X-PAYPAL-SECURITY-USERID:paypal-facilitator_api1.dibdaa.com",
-            "X-PAYPAL-SECURITY-PASSWORD :5H8P9XPNHPWAZ5D6",
-            "X-PAYPAL-SECURITY-SIGNATURE :ASV57ivVN4A960WA9t1PMtwKn0F9AEOMAZ8zo3Mz52Qa4wBOZt2CO2BS",
-            "X-PAYPAL-REQUEST-DATA-FORMAT :JSON",
-            "X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
-            "X-PAYPAL-APPLICATION-ID:APP-80W284485P519543T" );
+            "X-PAYPAL-SECURITY-USERID: ".env("PAYPAL_SANDBOX_API_USERNAME"),
+            "X-PAYPAL-SECURITY-PASSWORD: ".env("PAYPAL_SANDBOX_API_PASSWORD"),
+            "X-PAYPAL-SECURITY-SIGNATURE: ".env("PAYPAL_SANDBOX_API_SECRET"),
+            "X-PAYPAL-REQUEST-DATA-FORMAT: JSON",
+            "X-PAYPAL-RESPONSE-DATA-FORMAT: JSON",
+            "X-PAYPAL-APPLICATION-ID:APP-80W284485P519543T",
+        );
 //        $header = array(
 //            "X-PAYPAL-SECURITY-USERID:$paypal_detail->user_id",
 //            "X-PAYPAL-SECURITY-PASSWORD : $paypal_detail->password",

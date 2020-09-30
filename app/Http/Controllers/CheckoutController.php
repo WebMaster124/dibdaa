@@ -262,8 +262,8 @@ class CheckoutController extends Controller{
     }
 
     function placeOrder(Request $r){
-//        echo $r;
-//        exit;
+       echo $r;
+       exit;
         try{
             $auth=$r->header('Auth');
             $authDB=DB::table('auth')->where('id','1')->first();
@@ -679,13 +679,15 @@ class CheckoutController extends Controller{
 
                    $resultCount=DB::table('order')
                         ->where('order_id',$order->order_id)
-                        ->select(DB::raw("SUM(IF(status='Completed', '1', '0')) as paid,SUM(IF(status='unpaid', '1', '0')) as unpaid ,count(*) as cnt"))
+                        ->select(DB::raw("SUM(IF(status='Completed', '1', '0')) as Completed,SUM(IF(status='unpaid', '1', '0')) as unpaid , SUM(IF(status='paid', '1', '0')) as paid, count(*) as cnt"))
                         ->first();
-
+                        
                     if($resultCount->paid >= 1 && $resultCount->unpaid >= 1)
                       $order->status="Partially Paid";
                     else if($resultCount->paid >= 1 && $resultCount->unpaid == 0)
                       $order->status="Completed";
+                    // else if($resultCount->paid >= 1)
+                    //     $order->status="Paid";
                     else
                       $order->status="Unpaid";
 
@@ -1059,138 +1061,138 @@ class CheckoutController extends Controller{
                 
                 
                 //COME FROM CART
-//                if ($r->cart == 'true') {
-//
-//                    //CHECK PRODUCT IS EXPIRE OR NOT
-//                    $all_product = DB::table('product')->where('status', '=', '1')->get();
-//                    $p_id = array();
-//                    foreach ($all_product as $p) {
-//                        $date = strtotime("+ $p->renew_duration day", strtotime($p->created_date));
-//                        $last_date = date("Y-m-d h:m:i", $date);
-//                        $current_date = date("Y-m-d h:m:i");
-//
-//                        $datetime1 = date_create($current_date);
-//                        $datetime2 = date_create($last_date);
-//                        if ($datetime1 > $datetime2)
-//                            $p_id[] = $p->id;
-//                    }
-//
-//                    //MULTIPLE PRODUCT ORDER
-//                    //PRODUCT DETAILS
-//                    $qry = DB::table('add_to_cart as c')
-//                        ->join('product as p', 'p.id', '=', 'c.product_id')
-//                        ->where('c.user_id', $r->user_id)
-//                        ->where('p.quantity', '!=', '0')
-//                        ->whereNotIn('p.id', $p_id);
-//
-//                    if ($r->seller_id)
-//                        $qry = $qry->whereIn('p.user_id', $r->seller_id);
-//
-//                    $product_info = $qry->get(['c.id as cart_id', 'c.product_id','p.sq',
-//                        'c.specification', 'c.quantity', 'p.price', 'p.discount', 'p.user_id as seller_id', 'p.title', 'p.photos', 'p.quantity as product_quantity', 'p.shipment_type']);
-//                    $i = 0;
-//                    
-//                    
-//                    if (count($product_info) !== 0) {
-//                        $seller = array();
-//                        $seller_id = array();
-//                        $product_detail = array();
-//                        $coupon_code = array();
-//                        foreach ($product_info as $product) {
-//                            $payment_opt=($r->order_status=='Completed'?'1':'2');
-//                            $place_order = ['order_id' => $order_id, 'product_id' => $product->product_id, 'buyer_id' => $r->user_id, 'shipping_id' => $r->shipping_id,
-//                                'specification' => $product->specification, 'quantity' => $product->quantity, 'seller_id' => $product->seller_id, 'status' => $r->order_status,
-//                                'payment_opt'=>$payment_opt,'order_status'=>'Processing'];
-//                            if ($product->quantity > $product->product_quantity) {
-//                                $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Product not available.', 'product_detail' => $product];
-//                                return response()->json($this->reply);
-//                                exit;
-//                            }
-//
-//                            DB::table('order')->insertGetId($place_order);
-//                            $price = $product->quantity * $product->price;
-//                            $discount = $price * $product->discount / 100;
-//                            $product_info[$i]->final_price = $price - $discount;
-//                            $total = $total + $price - $discount;
-//
-//                            $productImg = unserialize($product->photos);
-//                            $product_info[$i]->photos = $productImg[0];
-//                            $product_info[$i]->shipment_type = unserialize($product->shipment_type);
-//                            $product_info[$i]->specification = unserialize($product->specification);
-//
-//                            //SELLER INFORMATION
-//                            $seller_info = DB::table('users')->where('id', $product->seller_id)->first();
-//                            $seller_name = $seller_info->first_name . ' ' . $seller_info->last_name;
-//                            $paypalEmail = $seller_info->payment_email;
-//                            $seller_id[] = $seller_info->id;
-//                            $product_name = $product->title;
-//                            $product_quantity = $product->quantity;
-//                            $product_price = $product->price;
-//                            $product_discount = $product->discount;
-//                            $product_specification = $product_info[$i]->specification;
-//
-//                            $final_price = $price - $discount;
-//                            //CHECK COUPON CODE APPLY OR NOT
-////                            $seller[]=$seller_info;
-//
-//                            if ($r->coupon_code) {
-//                                $total = $r->final_price;
-//                                $coupon_code = DB::table('coupon_code')->where('code', $r->coupon_code)->first();
-//                            }
-//
-//                            //QUANTITY MANAGEMENT
-//                            DB::table('product')->where('id', $product->product_id)->update(['quantity' => DB::raw("quantity - $product->quantity")]);
-//
-//                            //Quantity Management for Size wise
-//                            $specification = $product_specification;
-//                            if($specification['size'][0] != '-') {
-//                                $size = $specification['size'][0];
-//                                $sq = unserialize($product_info->sq);
-//                                $sq[$size] = $sq[$size] - $product->quantity;
-//                                $sq = serialize($sq);
-//                                DB::table('product')->where('id', $product->product_id)->update(['sq' => $sq]);
-//                            }
-//
-//                            // REMOVE CART PRODUCT
-//                           DB::table('add_to_cart')->where('id',$product->cart_id)->delete();
-//                             $product_detail[] = [$product_name, $product_quantity, $product_price, $final_price, $product_discount, $product_specification, $product->seller_id];
-//                             //SEND MAIL TO SELLER
-//                            $i++;
-//                        }
-//                        $seller = DB::table('users')->whereIn('id', $seller_id)->get();
-//                        if ($r->coupon_code) {
-//                            $coupon_code = DB::table('coupon_code')->where('code', $r->coupon_code)->first();
-//                            $coupon_code->discount = round($coupon_code->discount / $i, 2);
-//                        }
-//                        $email_template_seller=DB::table('email_template')->where('id','3')->first();
-//                        $email_template_seller->order_status=$r->order_status;
-//                        foreach ($seller as $s) {
-//                           Mail::to($s->email)->send(new PlaceOrderSeller($order_id, $product_info, $s->id, $total, $date1, $shipping_info, $buyer_info, $coupon_code,$email_template_seller));
-//                        }
-//
-//                        //SEND MAIL TO BUYER
-//                        $payment_status=$r->order_status;
-//                        if($payment_status=='unpaid')
-//                           $email_template=DB::table('email_template')->where('id','1')->first();
-//                        else
-//                            $email_template=DB::table('email_template')->where('id','2')->first();
-////                        echo '123456789<br>';
-//                        $this->buyerInvoice('Cart',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller,$r->user_id);
-////                        print_r($seller);
-//                       Mail::to($buyer_info->email, $buyer_name)->send(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $total, $date1, $shipping_info, $coupon_code, $payment_status, 'cart', $seller,$email_template));
-//                        
-////                       exit;
-//                        //UPDATE FINAL ORDER PRICE
-//                        DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['order_price' => $total]);
-//                        if ($r->coupon_code) {
-//                            DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['coupon_code' => $r->coupon_code]);
-//                        }
-//
-//                        $this->reply['place_order'] = ['status' => 'success', 'msg' => 'order place successfully', 'order_id' => $order_id];
-//                        //return view('Paypal/paypal_form')->with('product_info',$product_info)->with('paypalEmail',$paypalEmail);
-//                    } else
-//                        $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Cart is empty'];
-//                } else {
+               if ($r->cart == 'true') {
+
+                   //CHECK PRODUCT IS EXPIRE OR NOT
+                   $all_product = DB::table('product')->where('status', '=', '1')->get();
+                   $p_id = array();
+                   foreach ($all_product as $p) {
+                       $date = strtotime("+ $p->renew_duration day", strtotime($p->created_date));
+                       $last_date = date("Y-m-d h:m:i", $date);
+                       $current_date = date("Y-m-d h:m:i");
+
+                       $datetime1 = date_create($current_date);
+                       $datetime2 = date_create($last_date);
+                       if ($datetime1 > $datetime2)
+                           $p_id[] = $p->id;
+                   }
+
+                   //MULTIPLE PRODUCT ORDER
+                   //PRODUCT DETAILS
+                   $qry = DB::table('add_to_cart as c')
+                       ->join('product as p', 'p.id', '=', 'c.product_id')
+                       ->where('c.user_id', $r->user_id)
+                       ->where('p.quantity', '!=', '0')
+                       ->whereNotIn('p.id', $p_id);
+
+                   if ($r->seller_id)
+                       $qry = $qry->whereIn('p.user_id', $r->seller_id);
+
+                   $product_info = $qry->get(['c.id as cart_id', 'c.product_id','p.sq',
+                       'c.specification', 'c.quantity', 'p.price', 'p.discount', 'p.user_id as seller_id', 'p.title', 'p.photos', 'p.quantity as product_quantity', 'p.shipment_type']);
+                   $i = 0;
+                   
+                   
+                   if (count($product_info) !== 0) {
+                       $seller = array();
+                       $seller_id = array();
+                       $product_detail = array();
+                       $coupon_code = array();
+                       foreach ($product_info as $product) {
+                           $payment_opt=($r->order_status=='Completed'?'1':'2');
+                           $place_order = ['order_id' => $order_id, 'product_id' => $product->product_id, 'buyer_id' => $r->user_id, 'shipping_id' => $r->shipping_id,
+                               'specification' => $product->specification, 'quantity' => $product->quantity, 'seller_id' => $product->seller_id, 'status' => $r->order_status,
+                               'payment_opt'=>$payment_opt,'order_status'=>'Processing'];
+                           if ($product->quantity > $product->product_quantity) {
+                               $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Product not available.', 'product_detail' => $product];
+                               return response()->json($this->reply);
+                               exit;
+                           }
+
+                           DB::table('order')->insertGetId($place_order);
+                           $price = $product->quantity * $product->price;
+                           $discount = $price * $product->discount / 100;
+                           $product_info[$i]->final_price = $price - $discount;
+                           $total = $total + $price - $discount;
+
+                           $productImg = unserialize($product->photos);
+                           $product_info[$i]->photos = $productImg[0];
+                           $product_info[$i]->shipment_type = unserialize($product->shipment_type);
+                           $product_info[$i]->specification = unserialize($product->specification);
+
+                           //SELLER INFORMATION
+                           $seller_info = DB::table('users')->where('id', $product->seller_id)->first();
+                           $seller_name = $seller_info->first_name . ' ' . $seller_info->last_name;
+                           $paypalEmail = $seller_info->payment_email;
+                           $seller_id[] = $seller_info->id;
+                           $product_name = $product->title;
+                           $product_quantity = $product->quantity;
+                           $product_price = $product->price;
+                           $product_discount = $product->discount;
+                           $product_specification = $product_info[$i]->specification;
+
+                           $final_price = $price - $discount;
+                           //CHECK COUPON CODE APPLY OR NOT
+//                            $seller[]=$seller_info;
+
+                           if ($r->coupon_code) {
+                               $total = $r->final_price;
+                               $coupon_code = DB::table('coupon_code')->where('code', $r->coupon_code)->first();
+                           }
+
+                           //QUANTITY MANAGEMENT
+                           DB::table('product')->where('id', $product->product_id)->update(['quantity' => DB::raw("quantity - $product->quantity")]);
+
+                           //Quantity Management for Size wise
+                           $specification = $product_specification;
+                           if($specification['size'][0] != '-') {
+                               $size = $specification['size'][0];
+                               $sq = unserialize($product_info->sq);
+                               $sq[$size] = $sq[$size] - $product->quantity;
+                               $sq = serialize($sq);
+                               DB::table('product')->where('id', $product->product_id)->update(['sq' => $sq]);
+                           }
+
+                           // REMOVE CART PRODUCT
+                          DB::table('add_to_cart')->where('id',$product->cart_id)->delete();
+                            $product_detail[] = [$product_name, $product_quantity, $product_price, $final_price, $product_discount, $product_specification, $product->seller_id];
+                            //SEND MAIL TO SELLER
+                           $i++;
+                       }
+                       $seller = DB::table('users')->whereIn('id', $seller_id)->get();
+                       if ($r->coupon_code) {
+                           $coupon_code = DB::table('coupon_code')->where('code', $r->coupon_code)->first();
+                           $coupon_code->discount = round($coupon_code->discount / $i, 2);
+                       }
+                       $email_template_seller=DB::table('email_template')->where('id','3')->first();
+                       $email_template_seller->order_status=$r->order_status;
+                       foreach ($seller as $s) {
+                          Mail::to($s->email)->send(new PlaceOrderSeller($order_id, $product_info, $s->id, $total, $date1, $shipping_info, $buyer_info, $coupon_code,$email_template_seller));
+                       }
+
+                       //SEND MAIL TO BUYER
+                       $payment_status=$r->order_status;
+                       if($payment_status=='unpaid')
+                          $email_template=DB::table('email_template')->where('id','1')->first();
+                       else
+                           $email_template=DB::table('email_template')->where('id','2')->first();
+//                        echo '123456789<br>';
+                       $this->buyerInvoice('Cart',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller,$r->user_id);
+//                        print_r($seller);
+                      Mail::to($buyer_info->email, $buyer_name)->send(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $total, $date1, $shipping_info, $coupon_code, $payment_status, 'cart', $seller,$email_template));
+                       
+//                       exit;
+                       //UPDATE FINAL ORDER PRICE
+                       DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['order_price' => $total]);
+                       if ($r->coupon_code) {
+                           DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['coupon_code' => $r->coupon_code]);
+                       }
+
+                       $this->reply['place_order'] = ['status' => 'success', 'msg' => 'order place successfully', 'order_id' => $order_id];
+                       //return view('Paypal/paypal_form')->with('product_info',$product_info)->with('paypalEmail',$paypalEmail);
+                   } else
+                       $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Cart is empty'];
+               } else {
 
                     //SINGLE PRODUCT ORDER
                     $product_info = DB::table('product')->where('id', $r->product_id)

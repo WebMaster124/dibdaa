@@ -3,11 +3,15 @@
 // create a new cURL resource
 $ch = curl_init();
 
-$ppUserID = "paypal-facilitator_api1.dibdaa.com"; //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppPass = "5H8P9XPNHPWAZ5D6"; //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppSign = "ASV57ivVN4A960WA9t1PMtwKn0F9AEOMAZ8zo3Mz52Qa4wBOZt2CO2BS"; //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppAppID = "APP-80W284485P519543T"; //if it is sandbox then app id is always: APP-80W284485P519543T
+// $ppUserID = "paypal-facilitator_api1.dibdaa.com"; //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+// $ppPass = "5H8P9XPNHPWAZ5D6"; //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+// $ppSign = "ASV57ivVN4A960WA9t1PMtwKn0F9AEOMAZ8zo3Mz52Qa4wBOZt2CO2BS"; //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+// $ppAppID = "APP-80W284485P519543T"; //if it is sandbox then app id is always: APP-80W284485P519543T
 //$sandboxEmail = "********************"; //comment this line if you want to use it in production mode.It is just for sandbox mode
+$ppUserID = env('PAYPAL_SANDBOX_API_USERNAME'); //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+$ppPass = env('PAYPAL_SANDBOX_API_PASSWORD'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+$ppSign = env('PAYPAL_SANDBOX_API_SECRET'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+$ppAppID = "APP-80W284485P519543T"; //if it is sandbox then app id is always: APP-80W284485P519543T
 
 //$emailAddress = "sunil@rudrainnovatives.com"; //The email address you wana verify
 $emailAddress = "sb-bj3y47982010@personal.example.com"; //The email address you wana verify

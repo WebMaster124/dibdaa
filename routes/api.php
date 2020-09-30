@@ -229,7 +229,7 @@ Route::group(['prefix'=>'checkout'],function (){
     Route::post('create','ShippingController@create');
     Route::post('check-out-info','CheckoutController@checkOutInfo');
     Route::post('place-order','CheckoutController@placeOrder');
-    Route::post('place-PaypalOrderorder','CheckoutController@placePaypalOrder');
+    Route::post('place-PaypalOrder','CheckoutController@placePaypalOrder');
     Route::post('change-order-status','CheckoutController@changeOrderStatus');
     Route::post('view-purchase-products','CheckoutController@viewPurchaseProduct');
     Route::post('change-order-product-status','CheckoutController@changeOrderProductStatus');
