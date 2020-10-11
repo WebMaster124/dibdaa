@@ -131,7 +131,6 @@ class CheckoutController extends Controller{
                        $date = strtotime("+ $p->renew_duration day", strtotime($p->created_date));
                        $last_date=date("Y-m-d h:m:i", $date);
                         $current_date=date("Y-m-d h:m:i");
-
                         $datetime1 = date_create($current_date);
                         $datetime2 = date_create($last_date);
                         if($datetime1 > $datetime2)
@@ -172,8 +171,6 @@ class CheckoutController extends Controller{
                             $total = $total + $price - $discount;
                             $i++;
                             $businessName[]=$product->display_name;
-
-
                             $viewcheckOut[$product->display_name][]= $product->final_price;
                             $viewcheckOut[$product->display_name]['email']= rtrim($product->payment_email);
 
@@ -189,7 +186,6 @@ class CheckoutController extends Controller{
                            $viewcheckOut['businessName'] = '';
                        }
 
-
                        for($i = 0; $i < count($viewcheckOut['businessName']); $i++){
                            $viewcheckOut[$viewcheckOut['businessName'][$i]]['total'] = array_sum($viewcheckOut[$viewcheckOut['businessName'][$i]]);
                            $viewcheckOut[$viewcheckOut['businessName'][$i]]['total']= round($viewcheckOut[$viewcheckOut['businessName'][$i]]['total'] * 0.27,2);
@@ -203,7 +199,6 @@ class CheckoutController extends Controller{
 
                     $product_info->photos = unserialize($product_info->photos);
                     $product_info->payment_opt = unserialize($product_info->payment_opt);
-
                     $price = $r->quantity * $product_info->price;
                     $discount = $price * $product_info->discount / 100;
                     $product_info->final_price = $price - $discount;
@@ -240,10 +235,7 @@ class CheckoutController extends Controller{
                         $product_info->make_bid=false;
 
                     $cart=false;
-                    $seller_info=DB::table('users')->where('id',$product_info->user_id)->first(['display_name','payment_email','user_status','business_address']);
-//                    print_r($seller_info);
-//                    exit;
-                    
+                    $seller_info=DB::table('users')->where('id',$product_info->user_id)->first(['display_name','payment_email','user_status','business_address']);                    
                     $product_info->display_name=$seller_info->display_name;
                     $product_info->payment_email=$seller_info->payment_email;
                     $product_info->user_status=$seller_info->user_status;
@@ -267,20 +259,11 @@ class CheckoutController extends Controller{
         try{
             $auth=$r->header('Auth');
             $authDB=DB::table('auth')->where('id','1')->first();
-//            print_r($authDB);
-//            echo '<br>';
-//            echo Hash::check($auth,$authDB->auth);
-//            echo '<br>';
-//            echo $auth;
-//            exit;
             if(Hash::check($auth,$authDB->auth)) {
                 if ($r->user_id){
                 $order_id = time() . $r->user_id;
                 $total = 0;
                 $buyer_info = DB::table('users')->where('id', $r->user_id)->first();
-                
-//                print_r($buyer_info);
-                
                 $buyer_name = $buyer_info->first_name . ' ' . $buyer_info->last_name;
                 $buyer_email = $buyer_info->email;
                 if($buyer_info->mobile_number!=''){
@@ -294,17 +277,9 @@ class CheckoutController extends Controller{
                     $buyer_TRN = 'N/A';
                     $buyer_VAT = 'N/A';
                 }
-//                
-//                echo $r->shipping_id;
                 $shipping_info = DB::table('shipping')->where('id', $r->shipping_id)->first();
-                
-//                print_r($shipping_info);
-                
                 $date1 = date('M d,Y');
-//                echo 'cart'.$r->cart;
-                
-                
-                
+
                 //COME FROM CART
                 if ($r->cart == 'true') {
 
@@ -315,7 +290,6 @@ class CheckoutController extends Controller{
                         $date = strtotime("+ $p->renew_duration day", strtotime($p->created_date));
                         $last_date = date("Y-m-d h:m:i", $date);
                         $current_date = date("Y-m-d h:m:i");
-
                         $datetime1 = date_create($current_date);
                         $datetime2 = date_create($last_date);
                         if ($datetime1 > $datetime2)
@@ -336,8 +310,6 @@ class CheckoutController extends Controller{
                     $product_info = $qry->get(['c.id as cart_id', 'c.product_id','p.sq',
                         'c.specification', 'c.quantity', 'p.price', 'p.discount', 'p.user_id as seller_id', 'p.title', 'p.photos', 'p.quantity as product_quantity', 'p.shipment_type','p.payment_opt','p.return_opt','p.return_policy']);
                     $i = 0;
-                    
-                    
                     if (count($product_info) !== 0) {
                         $seller = array();
                         $seller_id = array();
@@ -362,7 +334,7 @@ class CheckoutController extends Controller{
 
                             $productImg = unserialize($product->photos);
                             $product_info[$i]->photos = $productImg[0];
-							echo "here";exit;
+                            echo "here";exit;
                             $product_info[$i]->shipment_type = unserialize($product->shipment_type);
                             $product_info[$i]->specification = unserialize($product->specification);
 
@@ -376,11 +348,8 @@ class CheckoutController extends Controller{
                             $product_price = $product->price;
                             $product_discount = $product->discount;
                             $product_specification = $product_info[$i]->specification;
-
                             $final_price = $price - $discount;
                             //CHECK COUPON CODE APPLY OR NOT
-//                            $seller[]=$seller_info;
-
                             if ($r->coupon_code) {
                                 $total = $r->final_price;
                                 $coupon_code = DB::table('coupon_code')->where('code', $r->coupon_code)->first();
@@ -422,18 +391,14 @@ class CheckoutController extends Controller{
                            $email_template=DB::table('email_template')->where('id','1')->first();
                         else
                             $email_template=DB::table('email_template')->where('id','2')->first();
-//                        echo '123456789<br>';
                         $this->buyerInvoice('Cart',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller,$r->user_id);
-//                        print_r($seller);
                        Mail::to($buyer_info->email, $buyer_name)->send(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $total, $date1, $shipping_info, $coupon_code, $payment_status, 'cart', $seller,$email_template));
                         
-//                       exit;
                         //UPDATE FINAL ORDER PRICE
                         DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['order_price' => $total]);
                         if ($r->coupon_code) {
                             DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['coupon_code' => $r->coupon_code]);
                         }
-
                         $this->reply['place_order'] = ['status' => 'success', 'msg' => 'order place successfully', 'order_id' => $order_id];
                         //return view('Paypal/paypal_form')->with('product_info',$product_info)->with('paypalEmail',$paypalEmail);
                     } else
@@ -444,41 +409,21 @@ class CheckoutController extends Controller{
                     $product_info = DB::table('product')->where('id', $r->product_id)
                         ->first(['id', 'title', 'photos', 'discount', 'quantity','sq', 'price', 'delivery_days', 'user_id as seller_id', 'photos', 'shipment_type','payment_opt','return_opt','return_policy','ship_to']);
 
-//                    print_r($product_info);
-//                    echo '<br>';
-//                    echo $product_info->return_opt;
-//                    exit;
                     if($product_info->return_opt!='No'){
                     $product_info->return_opt = substr($product_info->return_opt, strpos($product_info->return_opt, "_") + 1);    
                     }
-//                    echo $product_info->return_opt;
-//                    $aa = unserialize($product_info->payment_opt);
-//                    print_r($aa);
-//                    exit;
-                    
+
                     if ($product_info->quantity >= $r->quantity) {
                         $specification = $r->specification;
 
                         $buy_size = $specification['size'];
-						
+                        
                         $specification = serialize($specification);
 
                        $payment_opt=($r->order_status=='Completed'?'1':'2');
                         $place_order = ['order_id' => $order_id, 'product_id' => $product_info->id, 'buyer_id' => $r->user_id, 'shipping_id' => $r->shipping_id,
                             'specification' => $specification, 'quantity' => $r->quantity, 'seller_id' => $r->seller_id, 'status' => $r->order_status,
                             'payment_opt'=>$payment_opt,'order_status'=>'Processing'];
-//                        print_r($place_order);echo '<br>';
-//                        print_r($product_info->sq);echo '<br>';
-//                        if($product_info->sq != '') {
-//                            $sq = unserialize($product_info->sq);
-//                            print_r($sq);
-//                            if(isset($sq['size']) && $sq['size'] != $buy_size) {
-//                                $sq['size'] = $sq['size'] - $r->quantity;
-//                                echo $sq = serialize($sq);
-//                                //DB::table('product')->where('id', $product_info->id)->update(['sq' => $sq]);
-//                            }
-//                        }
-//                    exit;
                         DB::table('order')->insertGetId($place_order);
 
                         $productImg = unserialize($product_info->photos);
@@ -500,12 +445,9 @@ class CheckoutController extends Controller{
                         $product_price = $product_info->price;
                         $final_price = $price - $discount;
                         $product_discount = $product_info->discount;
-
                         $value = unserialize($seller_info->business_address);
-//                        $address = $value['flat_no'].','.$value['street'].'</br>'.$value['city'].' - '. $value['pincode'].',</br>'.$value['state_name'].',</br>'.$value['country_name'];
                         $seller_info->business_address = $value;
-//                        exit;
-                        
+
                         if ($r->final_price) {
                             $total = $r->final_price;
                             $final_price = $r->final_price;
@@ -529,54 +471,32 @@ class CheckoutController extends Controller{
                                 DB::table('product')->where('id', $product_info->id)->update(['sq' => $sq]);
                             }
                         }
-//                               print_r($product_info);exit;
-                
                         $product_detail = [$product_name, $product_quantity, $product_price, $final_price, $product_discount, $product_specification];
-//                        print_r($product_detail);echo '<br>';
-//                        exit;
                         //SEND MAIL TO SELLER
                         $email_template_seller=DB::table('email_template')->where('id','3')->first();
                         $email_template_seller->order_status=$r->order_status;
                         Mail::to($seller_info->email, $seller_name)->send(new SellerSingleOrder($order_id, $product_detail, $seller_name, $total, $date1, $shipping_info, $buyer_info, $coupon_code,$email_template_seller));
                         //SEND MAIL TO BUYER
-                        $payment_status=$r->order_status;
-                        
+                        $payment_status=$r->order_status;                        
                         $invoice_management=DB::table('setting')->where('id','1')->first(['buyer_invoice_management']);
                         $invoice=unserialize($invoice_management->buyer_invoice_management);
-                        
-//                         print_r($invoice);
-//                         echo '<br>';
-//                         $footer_note1 = strip_tags($invoice['footer_note1'],'<br/>');
-//                        echo 'asdasdsaas';
-//                        echo '<br>';
-//                        print_r($seller_info);
-//                        exit;
+
                         // GENERATE BUYER INVOICE
-                          $this->buyerInvoice('Buy It Now',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller_info,$r->user_id,$invoice['declaration_heading'],$invoice['aknowledgment_heading'],$invoice['declaration'],$invoice['aknowledgment'],$invoice['footer_note1'],$invoice['footer_note2'], $r->order_status);
-                        
-                          
-//                          print_r($this->buyerInvoice('Buy It Now',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller_info,$r->user_id,$invoice['declaration'],$invoice['aknowledgment']));
-//                        exit;
+                        $this->buyerInvoice('Buy It Now',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller_info,$r->user_id,$invoice['declaration_heading'],$invoice['aknowledgment_heading'],$invoice['declaration'],$invoice['aknowledgment'],$invoice['footer_note1'],$invoice['footer_note2'], $r->order_status);
+
                         if($payment_status=='unpaid')
                             $email_template=DB::table('email_template')->where('id','1')->first();
                         else
                             $email_template=DB::table('email_template')->where('id','2')->first();
-                       
-//                        print_r(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $coupon_code, $payment_status, '', $seller_info,$email_template));
-//                        exit;
                      
                         Mail::to($buyer_info->email, $buyer_name)->send(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $coupon_code, $payment_status, '', $seller_info,$email_template));
-//                         echo 'sdfsdfsdfsdf--';
                         //UPDATE FINAL ORDER PRICE
                         DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['order_price' => $total]);
-//                        echo 'sdfsdfsdfsdf243242345';
-//                        echo '<br>'.$order_id;
-//                        exit;
+
                         if ($r->coupon_code) {
                             DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['coupon_code' => $r->coupon_code]);
                         }
                             $this->reply['place_order'] = ['status' => 'success', 'msg' => 'order place successfully', 'order_id' => $order_id];
-//                        exit;
                     } else
                         $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Product not available.', 'product_detail' => $product_info];
                 }
@@ -626,12 +546,8 @@ class CheckoutController extends Controller{
             "footer_note2"=>$footer_note2,
               "payment_status"=>$order_status
         ];
-//        print_r($data);
-//        exit;
-//        echo "invoice/buyer/$order_id.pdf";
-//        $pdf = PDF::loadView('/invoice/buyer_invoice', $data);
+
         $pdf = PDF::loadView('/invoice/buyer_invoice', $data)->save(public_path("invoice/buyer/$order_id.pdf"));
-//        exit;
     }
 
     function buyer(){
@@ -686,11 +602,8 @@ class CheckoutController extends Controller{
                       $order->status="Partially Paid";
                     else if($resultCount->paid >= 1 && $resultCount->unpaid == 0)
                       $order->status="Completed";
-                    // else if($resultCount->paid >= 1)
-                    //     $order->status="Paid";
                     else
                       $order->status="Unpaid";
-
                     $orders[$i]->created_date = date('d.m.Y H:i:s',strtotime($order->created_date));
                     $i++;
                 }
@@ -1017,24 +930,16 @@ class CheckoutController extends Controller{
     function placePaypalOrder(Request $r){
         $Info = $r->checkoutInfo;
         $r=json_decode($Info);
-//        echo $r->user_id;
-//        exit;
         try{
 //            $auth=$r->header('Auth');
             $authDB=DB::table('auth')->where('id','1')->first();
-//            print_r($authDB);
-//            echo '<br>';
-//            echo Hash::check($auth,$authDB->auth);
-//            echo '<br>';
+
             $auth = 'dibdaaauth';
-//            exit;
             if(Hash::check($auth,$authDB->auth)) {
                 if ($r->user_id){
                 $order_id = time() . $r->user_id;
                 $total = 0;
-                $buyer_info = DB::table('users')->where('id', $r->user_id)->first();
-                
-//                print_r($buyer_info);
+                $buyer_info = DB::table('users')->where('id', $r->user_id)->first();                
                 
                 $buyer_name = $buyer_info->first_name . ' ' . $buyer_info->last_name;
                 $buyer_email = $buyer_info->email;
@@ -1049,20 +954,10 @@ class CheckoutController extends Controller{
                     $buyer_TRN = 'N/A';
                     $buyer_VAT = 'N/A';
                 }
-//                
-//                echo $r->shipping_id;
                 $shipping_info = DB::table('shipping')->where('id', $r->shipping_id)->first();
-                
-//                print_r($shipping_info);
-                
                 $date1 = date('M d,Y');
-//                echo 'cart'.$r->cart;
-                
-                
-                
-                //COME FROM CART
-               if ($r->cart == 'true') {
-
+                // COME FROM CART
+               if (!empty($r->cart) && $r->cart == 'true') {
                    //CHECK PRODUCT IS EXPIRE OR NOT
                    $all_product = DB::table('product')->where('status', '=', '1')->get();
                    $p_id = array();
@@ -1070,7 +965,6 @@ class CheckoutController extends Controller{
                        $date = strtotime("+ $p->renew_duration day", strtotime($p->created_date));
                        $last_date = date("Y-m-d h:m:i", $date);
                        $current_date = date("Y-m-d h:m:i");
-
                        $datetime1 = date_create($current_date);
                        $datetime2 = date_create($last_date);
                        if ($datetime1 > $datetime2)
@@ -1084,15 +978,12 @@ class CheckoutController extends Controller{
                        ->where('c.user_id', $r->user_id)
                        ->where('p.quantity', '!=', '0')
                        ->whereNotIn('p.id', $p_id);
-
-                   if ($r->seller_id)
+                   if (!empty($r->seller_id))
                        $qry = $qry->whereIn('p.user_id', $r->seller_id);
-
                    $product_info = $qry->get(['c.id as cart_id', 'c.product_id','p.sq',
                        'c.specification', 'c.quantity', 'p.price', 'p.discount', 'p.user_id as seller_id', 'p.title', 'p.photos', 'p.quantity as product_quantity', 'p.shipment_type']);
+                   // dd($product_info);
                    $i = 0;
-                   
-                   
                    if (count($product_info) !== 0) {
                        $seller = array();
                        $seller_id = array();
@@ -1108,13 +999,11 @@ class CheckoutController extends Controller{
                                return response()->json($this->reply);
                                exit;
                            }
-
                            DB::table('order')->insertGetId($place_order);
                            $price = $product->quantity * $product->price;
                            $discount = $price * $product->discount / 100;
                            $product_info[$i]->final_price = $price - $discount;
                            $total = $total + $price - $discount;
-
                            $productImg = unserialize($product->photos);
                            $product_info[$i]->photos = $productImg[0];
                            $product_info[$i]->shipment_type = unserialize($product->shipment_type);
@@ -1130,11 +1019,8 @@ class CheckoutController extends Controller{
                            $product_price = $product->price;
                            $product_discount = $product->discount;
                            $product_specification = $product_info[$i]->specification;
-
                            $final_price = $price - $discount;
                            //CHECK COUPON CODE APPLY OR NOT
-//                            $seller[]=$seller_info;
-
                            if ($r->coupon_code) {
                                $total = $r->final_price;
                                $coupon_code = DB::table('coupon_code')->where('code', $r->coupon_code)->first();
@@ -1176,12 +1062,9 @@ class CheckoutController extends Controller{
                           $email_template=DB::table('email_template')->where('id','1')->first();
                        else
                            $email_template=DB::table('email_template')->where('id','2')->first();
-//                        echo '123456789<br>';
                        $this->buyerInvoice('Cart',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller,$r->user_id);
-//                        print_r($seller);
                       Mail::to($buyer_info->email, $buyer_name)->send(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $total, $date1, $shipping_info, $coupon_code, $payment_status, 'cart', $seller,$email_template));
                        
-//                       exit;
                        //UPDATE FINAL ORDER PRICE
                        DB::table('order')->where(['buyer_id' => $r->user_id, 'order_id' => $order_id])->update(['order_price' => $total]);
                        if ($r->coupon_code) {
@@ -1189,33 +1072,28 @@ class CheckoutController extends Controller{
                        }
 
                        $this->reply['place_order'] = ['status' => 'success', 'msg' => 'order place successfully', 'order_id' => $order_id];
-                       //return view('Paypal/paypal_form')->with('product_info',$product_info)->with('paypalEmail',$paypalEmail);
+                       return view('Paypal/paypal_form')->with('product_info',$product_info)->with('paypalEmail',$paypalEmail);
                    } else
                        $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Cart is empty'];
-               } else {
-
+               } 
+               else 
+               {
                     //SINGLE PRODUCT ORDER
                     $product_info = DB::table('product')->where('id', $r->product_id)
                         ->first(['id', 'title', 'photos', 'discount', 'quantity','sq', 'price', 'delivery_days', 'user_id as seller_id', 'photos', 'shipment_type']);
+                    // dd($product_info);
+                    // dd($r->quantity);
 
-                    //print_r($product_info);
-//                    print_r($r->specification);exit;
                     if ($product_info->quantity >= $r->quantity) {
                         $specification = $r->specification;
-
-                        $buy_size = $specification->size;
-						
+                        $buy_size = $specification->size;                        
                         $specification = serialize($specification);
-//                        echo '<br>';
                         $payment_opt=($r->order_status=='Completed'?'1':'2');
                         $place_order = ['order_id' => $order_id, 'product_id' => $product_info->id, 'buyer_id' => $r->user_id, 'shipping_id' => $r->shipping_id,
                             'specification' => $specification, 'quantity' => $r->quantity, 'seller_id' => $r->seller_id, 'status' => $r->order_status,
                             'payment_opt'=>$payment_opt,'order_status'=>'Processing'];
                         DB::table('order')->insertGetId($place_order);
-//                        echo $product_info->photos;
-                        $productImg = unserialize($product_info->photos);
-//                        print_r($productImg);
-                        
+                        $productImg = unserialize($product_info->photos);                        
                         $product_info->photos = $productImg[0];
                         $price = $r->quantity * $product_info->price;
                         $discount = $price * $product_info->discount / 100;
@@ -1257,11 +1135,9 @@ class CheckoutController extends Controller{
                                 $sq = serialize($sq);
                                 DB::table('product')->where('id', $product_info->id)->update(['sq' => $sq]);
                             }
-                        }
-                            
+                        }                            
                 
                         $product_detail = [$product_name, $product_quantity, $product_price, $final_price, $product_discount, $product_specification];
-                        //print_r($product_detail);
                         
                         //SEND MAIL TO SELLER
                         $email_template_seller=DB::table('email_template')->where('id','3')->first();
@@ -1269,32 +1145,18 @@ class CheckoutController extends Controller{
                         Mail::to($seller_info->email, $seller_name)->send(new SellerSingleOrder($order_id, $product_detail, $seller_name, $total, $date1, $shipping_info, $buyer_info, $coupon_code,$email_template_seller));
                         //SEND MAIL TO BUYER
                         $payment_status=$r->order_status;
-//                        exit;
+                        // dd($payment_status); exit;
                         $invoice_management=DB::table('setting')->where('id','1')->first(['buyer_invoice_management']);
                         $invoice=unserialize($invoice_management->buyer_invoice_management);
-                        
-//                         print_r($invoice);
-//                         echo '<br>';
-//                         $footer_note1 = strip_tags($invoice['footer_note1'],'<br/>');
-//                        echo 'asdasdsaas';
-//                        echo '<br>';
-//                        print_r($seller_info);
-//                        exit;
+
                         // GENERATE BUYER INVOICE
-                          $this->buyerInvoice('Buy It Now',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller_info,$r->user_id,$invoice['declaration_heading'],$invoice['aknowledgment_heading'],$invoice['declaration'],$invoice['aknowledgment'],$invoice['footer_note1'],$invoice['footer_note2']);
-                        
-                          
-//                          print_r($this->buyerInvoice('Buy It Now',$order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller_info,$r->user_id,$invoice['declaration'],$invoice['aknowledgment']));
-//                        exit;
+                        $this->buyerInvoice('Buy It Now', $order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $seller_info,$r->user_id, $invoice['declaration_heading'], $invoice['aknowledgment_heading'],$invoice['declaration'], $invoice['aknowledgment'], $invoice['footer_note1'], $invoice['footer_note2'], $payment_status);
+
                         if($payment_status=='unpaid')
                             $email_template=DB::table('email_template')->where('id','1')->first();
                         else
                             $email_template=DB::table('email_template')->where('id','2')->first();
-//                        echo 'sdfsdfsdfsdf';
-//                        echo '<br>';
-//                        print_r(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $coupon_code, $payment_status, '', $seller_info,$email_template));
-//                        exit;
-                        
+
                         Mail::to($buyer_info->email, $buyer_name)->send(new PlaceOrderBuyer($order_id, $product_info, $buyer_name, $buyer_email, $buyer_mobile, $buyer_TRN, $buyer_VAT, $total, $date1, $shipping_info, $coupon_code, $payment_status, '', $seller_info,$email_template));
                         
                         //UPDATE FINAL ORDER PRICE
@@ -1307,7 +1169,7 @@ class CheckoutController extends Controller{
                         header("Location: http://trinipossecarnival.com/#/ordersuccess/".$order_id."");exit;
                     } else
                         $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'Product not available.', 'product_detail' => $product_info];
-//                }
+               }
             } else
                     $this->reply['place_order'] = ['status' => 'fail', 'msg' => 'User id not be null.'];
             } else

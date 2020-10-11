@@ -211,7 +211,7 @@ var CheckOutPage = /** @class */ (function () {
     CheckOutPage.prototype.CreateShipping = function (val) {
         var userID = JSON.parse(this.retrievedObject);
             this.saveAddress.user_id = userID.id;
-        this.infoService.callHttpFunction_post(__WEBPACK_IMPORTED_MODULE_4__environments_environment__["a" /* environment */].serverUrl + 'api/checkout/createe', this.saveAddress, function (response) {
+        this.infoService.callHttpFunction_post(__WEBPACK_IMPORTED_MODULE_4__environments_environment__["a" /* environment */].serverUrl + 'api/checkout/create', this.saveAddress, function (response) {
 //                if (response.ship_address.status == "success") {
 //                    _this.showaddress = false;
 //                    _this.viewAddress();

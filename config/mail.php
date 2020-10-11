@@ -2,18 +2,16 @@
 
 $vars = [];
 switch(APP_ENV) {
-    case 'local':
+    case 'local':case 'production':
         $vars = [
             'email_driver' => 'smtp',
             'email_host' => 'smtp.ionos.com',
-            'email_port' => 587,
-//            'email_from_address' => 'dibdaa@onlinetnt.com',
+            'email_port' => 465,
             'email_from_address' => 'dibdaa@dibdaa.com',
             'email_from_name' => 'Dibdaa',
-            'email_encryption' => 'tls',
+            'email_encryption' => 'SSL',
             'email_username' => 'dibdaa@dibdaa.com',
-//            'email_password' => 'D!bdaa123'
-            'email_password' => 'D1bdaa$1@1'
+            'email_password' => 'Sy$tem101d'
         ]; break;
     case 'test':
         $vars = [

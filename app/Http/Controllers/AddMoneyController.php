@@ -134,9 +134,7 @@ class AddMoneyController extends Controller
     {
 //        echo $redirect_url;exit;
         
-//        $checkoutInfo = json_decode(Session::get('checkoutInfo'));
-//        print_r($checkoutInfo);
-//        exit;
+       $checkoutInfo = json_decode(Session::get('checkoutInfo'));
         /** Get the payment ID before session clear **/
         $payment_id = Session::get('paypal_payment_id');
         /** clear the session payment ID **/

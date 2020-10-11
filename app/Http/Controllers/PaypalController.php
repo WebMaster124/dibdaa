@@ -66,39 +66,37 @@ class PaypalController extends Controller
     
     //Seller Payment to Admin
     function sellerPaypalPaymentApi(Request $r){
-//        echo $r;
         
       /*   $params = array(
-        'ivp_method'  => 'create',
-        'ivp_store'   => '21099',
-        'ivp_authkey' => 'k2qM4~bt4k#M6vv3',
-        'ivp_cart'    => 'UniqueCartID',  
-        'ivp_test'    => '1',
-        'ivp_amount'  => '100.00',
-        'ivp_currency'=> 'AED',
-        'ivp_desc'    => 'Product Description',
-        'return_auth' => 'https://domain.com/return.html',
-        'return_can'  => 'https://domain.com/return.html',
-        'return_decl' => 'https://domain.com/return.html'
-    );
+            'ivp_method'  => 'create',
+            'ivp_store'   => '21099',
+            'ivp_authkey' => 'k2qM4~bt4k#M6vv3',
+            'ivp_cart'    => 'UniqueCartID',  
+            'ivp_test'    => '1',
+            'ivp_amount'  => '100.00',
+            'ivp_currency'=> 'AED',
+            'ivp_desc'    => 'Product Description',
+            'return_auth' => 'https://domain.com/return.html',
+            'return_can'  => 'https://domain.com/return.html',
+            'return_decl' => 'https://domain.com/return.html'
+        );
         
         
         //print_r($params); exit;
         
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://secure.telr.com/gateway/order.json");
-curl_setopt($ch, CURLOPT_POST, count($params));
-curl_setopt($ch, CURLOPT_POSTFIELDS,$params);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
-$results = curl_exec($ch);
-curl_close($ch); */
-//$results = json_decode($results,true);
-//echo $results;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://secure.telr.com/gateway/order.json");
+        curl_setopt($ch, CURLOPT_POST, count($params));
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+        $results = curl_exec($ch);
+        curl_close($ch); */
+        //$results = json_decode($results,true);
+        //echo $results;
 
        /*  return $results;
-        exit */;
-//        echo 'test';
+
         $card = round($r->receiver_arr[0]['amount'][0]);
         $params = array(
             'ivp_method'  => 'create',
@@ -116,8 +114,7 @@ curl_close($ch); */
             'return_can'  => 'http://local.dibdaa.com/',
             'return_decl' => 'http://local.dibdaa.com/'
             );
-//       print_r($params);
-//       exit;
+
           /*   $ch = curl_init();
             //curl_setopt($ch, CURLOPT_URL, "https://secure.telr.com/gateway/remote.html");
             curl_setopt($ch, CURLOPT_URL, "https://secure.telr.com/gateway/order.json");
@@ -129,74 +126,72 @@ curl_close($ch); */
             return $results;
 //            exit;
             curl_close($ch);
-             */
-            
-            
-
-
-
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://secure.telr.com/gateway/order.json");
-curl_setopt($ch, CURLOPT_POST, count($params));
-curl_setopt($ch, CURLOPT_POSTFIELDS,$params);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
-$results = curl_exec($ch);
-curl_close($ch);
-$results = json_decode($results,true);
-//print_r($results);
-//exit;
-$ref= trim($results['order']['ref']);
-$url= trim($results['order']['url']);
-if (empty($ref) || empty($url)) {
-    echo "ghjhgj";exit;
-}else{
-     return $results;
-}
+                     */
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://secure.telr.com/gateway/order.json");
+        curl_setopt($ch, CURLOPT_POST, count($params));
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+        $results = curl_exec($ch);
+        curl_close($ch);
+        $results = json_decode($results,true);
+        $ref= trim($results['order']['ref']);
+        $url= trim($results['order']['url']);
+        if (empty($ref) || empty($url)) {
+            echo "ghjhgj";exit;
+        }else{
+             return $results;
+        }
         
         
-//        $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
-//        $header = array(
-//            "X-PAYPAL-SECURITY-USERID:$paypal_detail->user_id",
-//            "X-PAYPAL-SECURITY-PASSWORD : $paypal_detail->password",
-//            "X-PAYPAL-SECURITY-SIGNATURE : $paypal_detail->signature",
-//            "X-PAYPAL-REQUEST-DATA-FORMAT : JSON",
-//            "X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
-//            "X-PAYPAL-APPLICATION-ID:$paypal_detail->app_id" );
-//
-//        //$url="https://svcs.sandbox.paypal.com/AdaptivePayments/Pay?actionType=PAY&clientDetails.applicationId=APP-80W284485P519543T&clientDetails.ipAddress=192.168.1.113&senderEmail=paypal-business@dibdaa.com&currencyCode=USD&receiverList.receiver(0).amount=135.00&receiverList.receiver(0).email=paypalbusiness@dibdaa.com&requestEnvelope.errorLanguage=en_US&returnUrl=https://www.techcronus.com/staging/Dibdaa/www/&cancelUrl=https://www.techcronus.com/staging/Dibdaa/www/";
-//
-//        $createPacket = array(
-//            "actionType" =>"PAY",
-//            "currencyCode" => "USD",
-//            "receiverList" => array(
-//                "receiver" => $r->receiver_arr,
-//            ),
-//            "returnUrl" => config('app.frontend_url')."paymentsuccess/UqGVdpWVM0Xcjsw05X8uv4KdAaoQVw77",
-//            "cancelUrl" => config('app.frontend_url'),
-//            "requestEnvelope" => array(
-//                "errorLanguage" => "en_US",
-//                "detailLevel" => "ReturnAll",
-//            ),
-//        );
-//        $apiUrl = 'https://svcs.sandbox.paypal.com/AdaptivePayments/';
-//        $ch = curl_init();
-//        curl_setopt($ch, CURLOPT_URL, $apiUrl.'Pay');
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($createPacket));
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-//        $response = json_decode(curl_exec($ch),true);
-//        return $response;
+       $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
+       $header = array(
+           "X-PAYPAL-SECURITY-USERID:$paypal_detail->user_id",
+           "X-PAYPAL-SECURITY-PASSWORD : $paypal_detail->password",
+           "X-PAYPAL-SECURITY-SIGNATURE : $paypal_detail->signature",
+           "X-PAYPAL-REQUEST-DATA-FORMAT : JSON",
+           "X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
+           "X-PAYPAL-APPLICATION-ID:$paypal_detail->app_id" );
+
+       //$url="https://svcs.sandbox.paypal.com/AdaptivePayments/Pay?actionType=PAY&clientDetails.applicationId=APP-80W284485P519543T&clientDetails.ipAddress=192.168.1.113&senderEmail=paypal-business@dibdaa.com&currencyCode=USD&receiverList.receiver(0).amount=135.00&receiverList.receiver(0).email=paypalbusiness@dibdaa.com&requestEnvelope.errorLanguage=en_US&returnUrl=https://www.techcronus.com/staging/Dibdaa/www/&cancelUrl=https://www.techcronus.com/staging/Dibdaa/www/";
+
+       $createPacket = array(
+           "actionType" =>"PAY",
+           "currencyCode" => "USD",
+           "receiverList" => array(
+               // "receiver" => $r->receiver_arr,
+                "receiver" => array(
+                    array(
+                        "amount"=> "1.00",
+                        "email"=>"sb-dlyp43579291@business.example.com"),
+                    array(
+                        "amount"=> "2.00",
+                        "email"=>"sb-dlyp43579291@business.example.com"),
+                ),
+           ),
+           "returnUrl" => config('app.frontend_url')."paymentsuccess/UqGVdpWVM0Xcjsw05X8uv4KdAaoQVw77",
+           "cancelUrl" => config('app.frontend_url'),
+           "requestEnvelope" => array(
+               "errorLanguage" => "en_US",
+               "detailLevel" => "ReturnAll",
+           ),
+       );
+       $apiUrl = 'https://svcs.sandbox.paypal.com/AdaptivePayments/';
+       $ch = curl_init();
+       curl_setopt($ch, CURLOPT_URL, $apiUrl.'Pay');
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+       curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($createPacket));
+       curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+       $response = json_decode(curl_exec($ch),true);
+       return $response;
     }
     //Buyer Payment to Multiple Seller
     function callPaypalApi(Request $r){
-//        echo $r;
-//        exit;
-        $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
-        
+
+        $paypal_detail=DB::table('paypal_details')->where('id','1')->first();        
         $header = array(
             "X-PAYPAL-SECURITY-USERID: ".env("PAYPAL_SANDBOX_API_USERNAME"),
             "X-PAYPAL-SECURITY-PASSWORD: ".env("PAYPAL_SANDBOX_API_PASSWORD"),
@@ -219,7 +214,15 @@ if (empty($ref) || empty($url)) {
             "actionType" =>"PAY",
             "currencyCode" => "USD",
             "receiverList" => array(
-                "receiver" => $r->receiver_arr,
+                // "receiver" => $r->receiver_arr,
+                 "receiver" => array(
+                    array(
+                        "amount"=> "1.00",
+                        "email"=>"sb-5h5zy3600114@personal.example.com"),
+                    array(
+                        "amount"=> "2.00",
+                        "email"=>"sb-dlyp43579291@business.example.com"),
+                ),
             ),
             "returnUrl" => config('app.frontend_url')."/ordersuccess/123465895",
             "cancelUrl" => config('app.frontend_url'),
@@ -229,13 +232,14 @@ if (empty($ref) || empty($url)) {
             ),
         ),
     );
+        dd($createPacket); exit;
 //        print_r($createPacket);
 //        exit;
-//        echo $apiUrl = 'https://svcs.sandbox.paypal.com/AdaptivePayments/';
-        $apiUrl = 'https://www.sandbox.paypal.com/checkoutnow?token=';
+       echo $apiUrl = 'https://svcs.sandbox.paypal.com/AdaptivePayments/';
+        // $apiUrl = 'https://www.sandbox.paypal.com/checkoutnow?token=';
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiUrl);
-//        curl_setopt($ch, CURLOPT_URL, $apiUrl.'Pay');
+        // curl_setopt($ch, CURLOPT_URL, $apiUrl);
+       curl_setopt($ch, CURLOPT_URL, $apiUrl.'Pay');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -340,74 +344,51 @@ if (empty($ref) || empty($url)) {
 
     function verifyPaypalEmail(Request $r)
     {
-//        var_dump(function_exists('curl_version'));
-//    phpinfo();
-//    exit;
-//        echo 'test';
-//        
-//        if  (in_array  ('curl', get_loaded_extensions())) {
-// 
-//        echo "CURL is available on your web server";
-// 
-//    }  else {
-//        echo "CURL is not available on your web server";
-//    }
-//        
-//        exit;
 
         $paypal_detail=DB::table('paypal_details')->where('id','1')->first();
-        // create a new cURL resource
-$ch = curl_init();
+                // create a new cURL resource
+        $ch = curl_init();
 
-$ppUserID = env('PAYPAL_SANDBOX_API_USERNAME'); //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppPass = env('PAYPAL_SANDBOX_API_PASSWORD'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppSign = env('PAYPAL_SANDBOX_API_SECRET'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
-$ppAppID = "APP-80W284485P519543T"; //if it is sandbox then app id is always: APP-80W284485P519543T
-//$sandboxEmail = "********************"; //comment this line if you want to use it in production mode.It is just for sandbox mode
+        $ppUserID = env('PAYPAL_SANDBOX_API_USERNAME'); //Take it from   sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+        $ppPass = env('PAYPAL_SANDBOX_API_PASSWORD'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+        $ppSign = env('PAYPAL_SANDBOX_API_SECRET'); //Take it from sandbox dashboard for test mode or take it from paypal.com account in production mode, help: https://developer.paypal.com/docs/classic/api/apiCredentials/
+        $ppAppID = "APP-80W284485P519543T"; //if it is sandbox then app id is always: APP-80W284485P519543T
+        //$sandboxEmail = "********************"; //comment this line if you want to use it in production mode.It is just for sandbox mode
 
 
-//$emailAddress = "sb-bj3y47982010@personal.example.com"; //The email address you wana verify
-$emailAddress = $r->paypal_email; //The email address you wana verify
+        //$emailAddress = "sb-bj3y47982010@personal.example.com"; //The email address you wana verify
+        $emailAddress = $r->paypal_email; //The email address you wana verify
 
-//parameters of requests
-$nvpStr = 'emailAddress='.$emailAddress.'&matchCriteria=NONE';
+        //parameters of requests
+        $nvpStr = 'emailAddress='.$emailAddress.'&matchCriteria=NONE';
 
-// RequestEnvelope fields
-$detailLevel    = urlencode("ReturnAll");
-$errorLanguage  = urlencode("en_US");
-$nvpreq = "requestEnvelope.errorLanguage=$errorLanguage&requestEnvelope.detailLevel=$detailLevel&";
-$nvpreq .= "&$nvpStr";
-curl_setopt($ch, CURLOPT_POSTFIELDS, $nvpreq);
+        // RequestEnvelope fields
+        $detailLevel    = urlencode("ReturnAll");
+        $errorLanguage  = urlencode("en_US");
+        $nvpreq = "requestEnvelope.errorLanguage=$errorLanguage&requestEnvelope.detailLevel=$detailLevel&";
+        $nvpreq .= "&$nvpStr";
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $nvpreq);
 
-$headerArray = array(
-"X-PAYPAL-SECURITY-USERID:$ppUserID",
-"X-PAYPAL-SECURITY-PASSWORD:$ppPass",
-"X-PAYPAL-SECURITY-SIGNATURE:$ppSign",
-"X-PAYPAL-REQUEST-DATA-FORMAT:NV",
-"X-PAYPAL-RESPONSE-DATA-FORMAT:JSON",
-"X-PAYPAL-APPLICATION-ID:$ppAppID",
-//"X-PAYPAL-SANDBOX-EMAIL-ADDRESS:$sandboxEmail" //comment this line in production mode. IT IS JUST FOR SANDBOX TEST 
-);
+        $headerArray = array(
+        "X-PAYPAL-SECURITY-USERID:$ppUserID",
+        "X-PAYPAL-SECURITY-PASSWORD:$ppPass",
+        "X-PAYPAL-SECURITY-SIGNATURE:$ppSign",
+        "X-PAYPAL-REQUEST-DATA-FORMAT:NV",
+        "X-PAYPAL-RESPONSE-DATA-FORMAT:JSON",
+        "X-PAYPAL-APPLICATION-ID:$ppAppID",
+        //"X-PAYPAL-SANDBOX-EMAIL-ADDRESS:$sandboxEmail" //comment this line in production mode. IT IS JUST FOR SANDBOX TEST 
+        );
 
-$url="https://svcs.sandbox.paypal.com/AdaptiveAccounts/GetVerifiedStatus";
-curl_setopt($ch, CURLOPT_URL,$url);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_VERBOSE, 1);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headerArray);
-$paypalResponse = curl_exec($ch);
-return $paypalResponse;   //if you want to see whole PayPal response then uncomment it.
-curl_close($ch);
-
-//$data = json_decode($paypalResponse);
-//print_r($data);
-        
+        $url="https://svcs.sandbox.paypal.com/AdaptiveAccounts/GetVerifiedStatus";
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headerArray);
+        $paypalResponse = curl_exec($ch);
+        return $paypalResponse;   //if you want to see whole PayPal response then uncomment it.
+        curl_close($ch);
         exit;
-        
-        
-        
-        //print_r($paypal_detail);
-        //exit;
         $header = array(
             "X-PAYPAL-SECURITY-USERID: ".env("PAYPAL_SANDBOX_API_USERNAME"),
             "X-PAYPAL-SECURITY-PASSWORD: ".env("PAYPAL_SANDBOX_API_PASSWORD"),
@@ -424,9 +405,9 @@ curl_close($ch);
 //            "X-PAYPAL-RESPONSE-DATA-FORMAT :JSON",
 //            "X-PAYPAL-APPLICATION-ID:$paypal_detail->app_id" );
 
-//        $API_Endpoint = "https://svcs.sandbox.paypal.com/AdaptiveAccounts/GetVerifiedStatus";
+       $API_Endpoint = "https://svcs.sandbox.paypal.com/AdaptiveAccounts/GetVerifiedStatus";
 //        $API_Endpoint = "https://api.sandbox.paypal.com/nvp";
-        $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
+        // $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 
         $ret['error_new']='';
         $payLoad["emailAddress"]=$r->paypal_email;

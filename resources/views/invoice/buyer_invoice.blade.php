@@ -1004,6 +1004,8 @@
     if($seller_info->business_address!=''){ 
        
         ?>
+
+    dd($seller_info->business_address);
     
  <p><strong>Registered Address: </strong>  </p>
 	<p>&nbsp;</p>
